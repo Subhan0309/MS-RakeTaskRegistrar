@@ -48,7 +48,9 @@ function activate(context) {
 			}
 
 			const workspaceFolder = vscode.workspace.workspaceFolders[0].uri.fsPath;
-			const scriptPath = path.join(workspaceFolder, 'scripts', 'manage_rake_task_migration.rb');
+			
+			// Use the script bundled with the extension instead of looking in workspace
+			const scriptPath = path.join(context.extensionPath, 'scripts', 'manage_rake_task_migration.rb');
 			
 			// Convert URI to file path if needed
 			let rakeFilePath;
@@ -63,10 +65,10 @@ function activate(context) {
 			
 			const relativeRakeFilePath = path.relative(workspaceFolder, rakeFilePath);
 			
-			// Check if the script file exists
+			// Check if the script file exists in extension directory
 			const fs = require('fs');
 			if (!fs.existsSync(scriptPath)) {
-				vscode.window.showErrorMessage(`Script not found at: ${scriptPath}`);
+				vscode.window.showErrorMessage(`Extension script not found at: ${scriptPath}. Please reinstall the extension.`);
 				return;
 			}
 
@@ -76,7 +78,8 @@ function activate(context) {
 				return;
 			}
 
-			const command = `ruby "${scriptPath}" "${relativeRakeFilePath}" "${taskName}"`;
+			// Execute the bundled script with workspace context
+			const command = `cd "${workspaceFolder}" && ruby "${scriptPath}" "${relativeRakeFilePath}" "${taskName}"`;
 			const terminal = vscode.window.createTerminal('Rake Task Migration');
 			terminal.show();
 			terminal.sendText(command);

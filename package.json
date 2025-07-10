@@ -25,10 +25,18 @@
       }
     ]
   },
+  "files": [
+    "extension.js",
+    "scripts/**/*",
+    "package.json",
+    "README.md",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "lint": "eslint .",
     "pretest": "npm run lint",
-    "test": "vscode-test"
+    "test": "vscode-test",
+    "vscode:prepublish": "npm run lint"
   },
   "devDependencies": {
     "@types/vscode": "^1.101.0",
